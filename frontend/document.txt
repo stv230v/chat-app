@@ -1,3 +1,11 @@
 https://zenn.dev/jinku/articles/4d8dd0855e21aa
 
 参考資料
+
+07/12/11:40以降に再びする質問
+そちらのコードだと、動作は問題ありません。しかしながら、xampp/htdocs/api/chat_history.jsonを確認すると、何も記述されていません。
+（現在frontend/src/app/page.tsxとしていますが、こちらのファイルもhtdocsフォルダ内に格納しなければ動かないのでしょうか？）
+
+
+jsonファイルに履歴が記述されるように、phpをうまく使いたいです。
+原因と改善点を教えてください。
