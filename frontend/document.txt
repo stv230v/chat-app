@@ -1,3 +1,10 @@
 https://zenn.dev/jinku/articles/4d8dd0855e21aa
 
 参考資料
+
+起動前に...
+・chat_api.phpは、 xampp/htdocs/api/chat_api.php のように格納しておくこと
+・xamppを立ち上げ、Apacheサーバーを動かしておくこと
+
+今後やること
+uiやfunctionなどをコンポーネントごとにまとめる
