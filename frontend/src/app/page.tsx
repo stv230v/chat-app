@@ -1,7 +1,8 @@
 "use client";
 
-// import { Messages } from "openai/resources/chat/completions.js";
 import React, { useState, useEffect, useRef } from "react";
+import SubmitButton from "../components/ui/Button";
+import TextInput from "../components/ui/Text";
 
 // メッセージの型を定義
 interface Message {
@@ -47,7 +48,7 @@ export default function Home() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
-  // 送信ボタンのクリックイベント
+  // 送信ボタンのクリックイベント
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // 初期動作のキャンセル
     e.preventDefault();
@@ -60,70 +61,6 @@ export default function Home() {
     const currentInput = input;
     setInput("");
     setIsLoading(true);
-
-    //   // Gemini APIに送信するための会話履歴を準備
-    //   const chatHistoryForApi = newMessages.map((msg) => ({
-    //     role: msg.role === "assistant" ? "model" : "user",
-    //     parts: [{ text: msg.content }],
-    //   }));
-
-    //   // APIペイロードを作成
-    //   const payload = {
-    //     contents: chatHistoryForApi,
-    //   };
-
-    //   try {
-    //     // Gemini APIを直接呼び出す
-    //     // gemini-2.0-flashモデルを使用する → APIキーはを直接指定する → Google AI Studio で生成したapiキーを入力
-    //     const apiKey = "AIzaSyArl9NmO78fBisVQKzNvYelsnqMJhSalKw";
-    //     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-    //     const response = await fetch(apiUrl, {
-    //       method: "POST",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(payload),
-    //     });
-
-    //     if (!response.ok) {
-    //       const errorBody = await response.text();
-    //       throw new Error(
-    //         `APIリクエストが失敗しました。ステータス: ${response.status}, 本文: ${errorBody}`
-    //       );
-    //     }
-
-    //     const result = await response.json();
-
-    //     let assistantMessageContent =
-    //       "申し訳ありませんが、応答を取得できませんでした。";
-    //     // APIからの応答を安全に解析
-    //     if (
-    //       result.candidates &&
-    //       result.candidates.length > 0 &&
-    //       result.candidates[0].content &&
-    //       result.candidates[0].content.parts &&
-    //       result.candidates[0].content.parts.length > 0
-    //     ) {
-    //       assistantMessageContent = result.candidates[0].content.parts[0].text;
-    //     }
-
-    //     const assistantMessage: Message = {
-    //       role: "assistant",
-    //       content: assistantMessageContent,
-    //     };
-
-    //     setChat((prev) => [...prev, assistantMessage]);
-    //   } catch (error) {
-    //     console.error("API呼び出しエラー:", error);
-    //     const errorMessage: Message = {
-    //       role: "assistant",
-    //       content:
-    //         "エラーが発生しました。しばらくしてからもう一度お試しください。",
-    //     };
-    //     setChat((prev) => [...prev, errorMessage]);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // };
 
     try {
       // fetchの宛先をphpに変更する
@@ -210,23 +147,17 @@ export default function Home() {
           {/* 入力フォーム(テキストボックス・ボタン) */}
           <div className="p-4 border-t">
             <form onSubmit={handleSubmit} className=" flex gap-2">
-              <input
-                type="text"
-                className="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                placeholder="メッセージを入力してください"
-                // 入力値をinputで管理
+              <TextInput
                 value={input}
-                // onChangeイベントにより、入力されると随時値を取得
                 onChange={(e) => setInput(e.target.value)}
+                placeholder="メッセージを入力してください"
                 disabled={isLoading}
               />
-              <input
-                type="submit"
-                // isLoadingの状態によって、表示を切り替える
-                value={isLoading ? "送信中..." : "送信"}
-                className={`px-6 py-3 font-semibold text-white rounded-lg cursor-pointer transition
-                ${isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"}`}
+              <SubmitButton
+                isLoading={isLoading}
                 disabled={isLoading}
+                loadingText="送信中..."
+                defaultText="送信"
               />
             </form>
           </div>
