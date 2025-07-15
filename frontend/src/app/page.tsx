@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SubmitButton from "../components/ui/Button";
 import TextInput from "../components/ui/Text";
+import { useMessageSubmit } from "../lib/click";
 
 // メッセージの型を定義
 interface Message {
@@ -18,6 +19,17 @@ export default function Home() {
 
   // phpとの連携 → phpを介してgeminiを呼び出す
   const API_URL = "http://localhost/api/chat_api.php";
+
+  // カスタムフックを使用してhandleSubmitを取得
+  const { handleSubmit } = useMessageSubmit({
+    input,
+    setInput,
+    chat,
+    setChat,
+    isLoading,
+    setIsLoading,
+    apiUrl: API_URL,
+  });
 
   // ページ読み込み時に履歴を取得する
   useEffect(() => {
@@ -47,63 +59,6 @@ export default function Home() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
-
-  // 送信ボタンのクリックイベント
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // 初期動作のキャンセル
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    const userMessage: Message = { role: "user", content: input };
-    // UIへの反映
-    const newMessages = [...chat, userMessage];
-    setChat(newMessages);
-    const currentInput = input;
-    setInput("");
-    setIsLoading(true);
-
-    try {
-      // fetchの宛先をphpに変更する
-      // 送信データを変更
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "send_message",
-          message: currentInput,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(
-          `APIリクエストが失敗しました。ステータス: ${response.status}, 本文: ${errorBody}`
-        );
-      }
-
-      const result = await response.json();
-      // PHPからの返信を取得
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: result.reply,
-      };
-
-      // AIの応答を、PHPから返ってくる確定した値で更新
-      setChat((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error("API呼び出しエラー:", error);
-      const errorMessage: Message = {
-        role: "assistant",
-        content:
-          "エラーが発生しました。PHPサーバーとの通信を確認してください。",
-      };
-
-      // ユーザーのメッセージを一旦削除
-      setChat((prev) => [...prev.slice(0, -1), errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div>
