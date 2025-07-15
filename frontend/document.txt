@@ -6,5 +6,9 @@ https://zenn.dev/jinku/articles/4d8dd0855e21aa
 ・chat_api.phpは、 xampp/htdocs/api/chat_api.php のように格納しておくこと
 ・xamppを立ち上げ、Apacheサーバーを動かしておくこと
 
+srcの中にcomponentsフォルダを作成すること！
+エラーが発生することがある。
+また、htmlを弄るような拡張機能があると、デバッグ時にエラーが出ることがある
+
 今後やること
 uiやfunctionなどをコンポーネントごとにまとめる
