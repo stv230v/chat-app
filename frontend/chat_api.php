@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 // 設定
 // ↓ 自分のgeminiのAPIキー(Google AI StudioでAPIキーを取得)
-$gemini_api_key = 'AIzaSyArl9NmO78fBisVQKzNvYelsnqMJhSalKw';
+// $gemini_api_key = 'AIzaSyArl9NmO78fBisVQKzNvYelsnqMJhSalKw';
+$gemini_api_key = 'AIzaSyCTPpE7FTwq-QYwZNuWuqdyEEwkW-iM9nI';
 $history_file = 'chat_history.json';
 
 // 履歴ファイルが存在しないか、中身が空の場合
