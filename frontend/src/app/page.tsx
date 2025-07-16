@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SubmitButton from "../components/ui/Button";
 import TextInput from "../components/ui/Text";
+import ChatDisplay from "../components/ui/Display";
 import { useMessageSubmit } from "../lib/click";
 
 // メッセージの型を定義
@@ -69,35 +70,11 @@ export default function Home() {
           </h1>
 
           {/* 表示エリア */}
-          <div className="flex-grow p-4 overflow-y-auto space-y-4">
-            {chat.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-2 rounded-2xl ${
-                    msg.role === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  {/* 改行を適切に表示するためにwhite-spaceを使用 */}
-                  <p style={{ whiteSpace: "pre-wrap" }}>{msg.content}</p>
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="px-4 py-2 rounded-2xl bg-gray-200 text-gray-800">
-                  <span className="animate-pulse">考え中...</span>
-                </div>
-              </div>
-            )}
-            <div ref={chatEndRef} />
-          </div>
+          <ChatDisplay
+            chat={chat}
+            isLoading={isLoading}
+            chatEndRef={chatEndRef}
+          />
 
           {/* 入力フォーム(テキストボックス・ボタン) */}
           <div className="p-4 border-t">
