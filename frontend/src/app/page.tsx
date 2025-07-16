@@ -21,6 +21,22 @@ export default function Home() {
   // phpとの連携 → phpを介してgeminiを呼び出す
   const API_URL = "http://localhost/api/chat_api.php";
 
+  // チャット履歴をリセットする関数
+  const handleReset = async () => {
+    try {
+      // APIでサーバー側の履歴も削除
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "clear_history" }),
+      });
+      // クライアント側の履歴もクリア
+      setChat([]);
+    } catch (error) {
+      console.error("履歴の削除に失敗しました:", error);
+    }
+  };
+
   // カスタムフックを使用してhandleSubmitを取得
   const { handleSubmit } = useMessageSubmit({
     input,
@@ -65,9 +81,15 @@ export default function Home() {
     <div>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 font-sans">
         <div className="flex flex-col w-full max-w-2xl h-[90vh] bg-white rounded-xl shadow-2xl">
-          <h1 className="p-4 text-2xl font-bold text-center text-gray-800 border-b">
-            AIチャット
-          </h1>
+          <div className="flex justify-between items-center p-4 border-b">
+            <h1 className="text-2xl font-bold text-gray-800">AIチャット</h1>
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors duration-200"
+            >
+              リセット
+            </button>
+          </div>
 
           {/* 表示エリア */}
           <ChatDisplay
