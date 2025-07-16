@@ -18,7 +18,7 @@ export default function ChatDisplay({
   chatEndRef,
 }: ChatDisplayProps) {
   return (
-    <div className="flex-grow p-4 overflow-y-auto space-y-4">
+    <div className="flex-grow w-full max-w-6xl mx-auto p-4 overflow-y-auto space-y-4">
       {chat.map((msg, index) => (
         <div
           key={index}
@@ -29,7 +29,7 @@ export default function ChatDisplay({
           <div
             className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-2 rounded-2xl ${
               msg.role === "user"
-                ? "bg-blue-500 text-white"
+                ? "bg-green-300 text-black"
                 : "bg-gray-200 text-gray-800"
             }`}
           >

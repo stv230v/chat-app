@@ -20,7 +20,7 @@ export default function SubmitButton({
   const baseStyles =
     "px-6 py-3 font-semibold text-white rounded-lg cursor-pointer transition";
   const loadingStyles = "bg-gray-400";
-  const activeStyles = "bg-blue-500 hover:bg-blue-600";
+  const activeStyles = "bg-green-500 hover:bg-green-600";
 
   const buttonStyles = `${baseStyles} ${
     isLoading || disabled ? loadingStyles : activeStyles
