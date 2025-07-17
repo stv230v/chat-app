@@ -1,3 +1,5 @@
+import { clearChatHistory } from "./history";
+
 // メッセージの型を定義
 interface Message {
   role: "user" | "assistant";
@@ -26,11 +28,12 @@ export const useMessageSubmit = ({
   apiUrl,
 }: UseMessageSubmitProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // 初期動作のキャンセル
+    // 初期動作のキャンセル (e.preventDefault())
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = { role: "user", content: input };
+
     // UIへの反映
     const newMessages = [...chat, userMessage];
     setChat(newMessages);
@@ -82,4 +85,23 @@ export const useMessageSubmit = ({
   };
 
   return { handleSubmit };
+};
+
+// カスタムフックでチャットリセットを作成
+interface UseResetChatProps {
+  setChat: (value: Message[] | ((prev: Message[]) => Message[])) => void;
+  apiUrl: string;
+}
+
+export const useResetChat = ({ setChat, apiUrl }: UseResetChatProps) => {
+  const handleReset = async () => {
+    try {
+      await clearChatHistory(apiUrl);
+      setChat([]);
+    } catch (error) {
+      console.error("履歴の削除に失敗しました:", error);
+    }
+  };
+
+  return { handleReset };
 };
