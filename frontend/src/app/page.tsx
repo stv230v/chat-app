@@ -77,12 +77,27 @@ export default function Home() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
+  // 最新のAIメッセージに「もっと熱くなれよ」が含まれているかチェック
+  const shouldShowMatuoka = () => {
+    if (chat.length === 0) return false;
+
+    // 最新のassistantメッセージを探す
+    for (let i = chat.length - 1; i >= 0; i--) {
+      if (chat[i].role === "assistant") {
+        return chat[i].content.includes("もっと熱くなれよ");
+      }
+    }
+    return false;
+  };
+
   return (
     <div>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 font-sans">
         <div className="flex flex-col w-full max-w-2xl h-[90vh] bg-white rounded-xl shadow-2xl">
           <div className="flex justify-between items-center p-4 border-b">
-            <h1 className="text-2xl font-bold text-gray-800">AIチャット</h1>
+            <h1 className="text-2xl font-bold text-gray-800 flex-grow text-center">
+              AIチャット
+            </h1>
             <button
               onClick={handleReset}
               className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors duration-200"
@@ -96,6 +111,7 @@ export default function Home() {
             chat={chat}
             isLoading={isLoading}
             chatEndRef={chatEndRef}
+            shouldShowMatuoka={shouldShowMatuoka}
           />
 
           {/* 入力フォーム(テキストボックス・ボタン) */}
