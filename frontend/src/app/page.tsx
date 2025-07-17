@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import SubmitButton from "../components/ui/Button";
 import TextInput from "../components/ui/Text";
 import ChatDisplay from "../components/ui/Display";
-import { useMessageSubmit } from "../lib/click";
+import { useMessageSubmit, useResetChat } from "../lib/click";
+import { fetchChatHistory } from "../lib/history";
 
 // メッセージの型を定義
 interface Message {
@@ -18,24 +19,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // phpとの連携 → phpを介してgeminiを呼び出す
+  // phpとの連携 → phpを介してgeminiを呼び出す(chat_api.phpにgeminiAPIキーを書いている)
+  // APIのURL(chat_api.phpの位置に注意)
   const API_URL = "http://localhost/api/chat_api.php";
-
-  // チャット履歴をリセットする関数
-  const handleReset = async () => {
-    try {
-      // APIでサーバー側の履歴も削除
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "clear_history" }),
-      });
-      // クライアント側の履歴もクリア
-      setChat([]);
-    } catch (error) {
-      console.error("履歴の削除に失敗しました:", error);
-    }
-  };
 
   // カスタムフックを使用してhandleSubmitを取得
   const { handleSubmit } = useMessageSubmit({
@@ -48,40 +34,35 @@ export default function Home() {
     apiUrl: API_URL,
   });
 
-  // ページ読み込み時に履歴を取得する
+  // カスタムフックを使用 → handleResetを取得
+  const { handleReset } = useResetChat({
+    setChat,
+    apiUrl: API_URL,
+  });
+
+  // ページ読み込み時、履歴を取得
   useEffect(() => {
-    const fetchHistory = async () => {
+    const loadHistory = async () => {
       try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "get_history" }),
-        });
-        const historyData = await response.json();
-        if (Array.isArray(historyData)) {
-          const formattedHistory: Message[] = historyData.flatMap((entry) => [
-            { role: "user", content: entry.user },
-            { role: "assistant", content: entry.assistant },
-          ]);
-          setChat(formattedHistory);
-        }
+        const history = await fetchChatHistory(API_URL);
+        setChat(history);
       } catch (error) {
         console.error("履歴の取得に失敗しました:", error);
       }
     };
-    fetchHistory();
+    loadHistory();
   }, []);
 
-  // メッセージが追加されると一番下までスクロール
+  // メッセージが追加される場合、一番下までスクロール
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
-  // 最新のAIメッセージに「もっと熱くなれよ」が含まれているかチェック
+  // AIメッセージに「もっと熱くなれよ」が含まれているか
+  // ↓ (松岡修造の口調にするかどうか)
   const shouldShowMatuoka = () => {
     if (chat.length === 0) return false;
 
-    // 最新のassistantメッセージを探す
     for (let i = chat.length - 1; i >= 0; i--) {
       if (chat[i].role === "assistant") {
         return chat[i].content.includes("もっと熱くなれよ");
