@@ -77,7 +77,7 @@ export default function Home() {
         <div className="flex flex-col w-full max-w-2xl h-[90vh] bg-white rounded-xl shadow-2xl">
           <div className="flex justify-between items-center p-4 border-b">
             <h1 className="text-2xl font-bold text-gray-800 flex-grow text-center">
-              AIチャット
+              二重人格チャット
             </h1>
             <button
               onClick={handleReset}
