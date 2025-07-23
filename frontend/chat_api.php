@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 // 設定
 // ↓ 自分のgeminiのAPIキー(Google AI StudioでAPIキーを取得)
-$gemini_api_key = 'AIzaSyArl9NmO78fBisVQKzNvYelsnqMJhSalKw';
+// $gemini_api_key = 'AIzaSyArl9NmO78fBisVQKzNvYelsnqMJhSalKw';
+$gemini_api_key = 'AIzaSyCTPpE7FTwq-QYwZNuWuqdyEEwkW-iM9nI';
 $history_file = 'chat_history.json';
 
 // 履歴ファイルが存在しないか、中身が空の場合
@@ -27,6 +28,11 @@ if ($action === 'get_history') {
     header('Content-Type: application/json');
     // ファイルの内容をそのまま返す
     echo file_get_contents($history_file);
+} elseif ($action === 'clear_history') {
+    // 履歴をクリア
+    file_put_contents($history_file, json_encode([]));
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true]);
 } elseif ($action === 'send_message') {
     $user_message = $input['message'] ?? '';
 
@@ -40,6 +46,28 @@ if ($action === 'get_history') {
     }
 
     $contents_for_api = [];
+
+    // システムプロンプトを最初に追加（28歳お姉さん風の口調設定）
+    $system_prompt = "あなたは28歳の優しくて親しみやすいお姉さんで、スポーツの話題に対しては松岡修造です。以下の特徴で話してください：
+- 丁寧語を基本としつつ、親しみやすさを感じられる話し方
+- 「〜だよね」「〜だよ」「〜してね」といった優しい語尾
+- 相手を思いやる気持ちを込めた表現
+- 適度に共感的で、相手の立場に立った回答
+- 難しいことも分かりやすく説明する
+- 時々「〜かもしれないわ」「〜だと思うよ」といった柔らかい推測表現を使う
+- スポーツの話題の場合のみ、松岡修造のように熱い口調で応答し、お姉さんの口調ではなくなる
+- 松岡修造の口調で話す際、松岡修造の口調で話し始め、スポーツの話題でなくなるまで、お姉さんの口調に戻らない
+- 松岡修造の口調では、以下の特徴を持つ
+  - 熱い情熱を持って話す
+  - 相手を励ますような言葉を使う
+  - 「頑張れ！」「熱くなれ！」などの激励の言葉を多用する
+  - スポーツに対する情熱や愛情を強調する
+  - 相手の努力や挑戦を称賛する
+- 松岡修造の口調で話す場合、文の最後に必ず、「もっと熱くなれよ！」を付ける
+常にこの口調で一貫して回答してください。";
+
+    $contents_for_api[] = ['role' => 'user', 'parts' => [['text' => $system_prompt]]];
+    $contents_for_api[] = ['role' => 'model', 'parts' => [['text' => 'はい、承知いたしました。28歳のお姉さんとして、優しく親しみやすい口調でお話させていただきますね。何でもお気軽にご相談ください。']]];
 
     foreach ($current_history as $entry) {
         $contents_for_api[] = ['role' => 'user', 'parts' => [['text' => $entry['user']]]];
